@@ -94,9 +94,9 @@ const MapView = () => {
               <Popup>
                 <div className="min-w-[200px]">
                   <p className="font-bold text-sm">{equipmentTypeIcons[eq.type]} {eq.name}</p>
-                  <p className="text-xs text-gray-600">{eq.ownerName}</p>
+                  <p className="text-xs text-muted-foreground">{eq.ownerName}</p>
                   <p className="text-xs">{eq.location}</p>
-                  <p className="font-bold text-sm mt-1 text-green-700">{eq.pricePerHectare.toLocaleString()} {eq.currency}/ha</p>
+                  <p className="font-bold text-sm mt-1 text-primary">{eq.pricePerHectare.toLocaleString()} {eq.currency}/ha</p>
                   <Link to={`/equipment/${eq.id}`}>
                     <Button size="sm" className="mt-2 w-full text-xs h-7">{t.equipment.details}</Button>
                   </Link>
