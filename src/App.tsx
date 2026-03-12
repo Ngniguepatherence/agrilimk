@@ -35,7 +35,7 @@ const App = () => (
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/marketplace" element={<Marketplace />} />
                 <Route path="/equipment/:id" element={<EquipmentDetail />} />
-                <Route path="/map" element={<MapView />} />
+                <Route path="/map" element={<Suspense fallback={<div className="flex items-center justify-center h-screen">Loading map...</div>}><MapView /></Suspense>} />
                 <Route path="/farmer" element={<FarmerDashboard />} />
                 <Route path="/owner" element={<OwnerDashboard />} />
                 <Route path="/admin" element={<AdminPanel />} />
