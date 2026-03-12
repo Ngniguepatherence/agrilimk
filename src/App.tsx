@@ -11,7 +11,8 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Marketplace from "./pages/Marketplace";
 import EquipmentDetail from "./pages/EquipmentDetail";
-import MapView from "./pages/MapView";
+import { lazy, Suspense } from "react";
+const MapView = lazy(() => import("./pages/MapView"));
 import FarmerDashboard from "./pages/FarmerDashboard";
 import OwnerDashboard from "./pages/OwnerDashboard";
 import AdminPanel from "./pages/AdminPanel";
@@ -34,7 +35,7 @@ const App = () => (
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/marketplace" element={<Marketplace />} />
                 <Route path="/equipment/:id" element={<EquipmentDetail />} />
-                <Route path="/map" element={<MapView />} />
+                <Route path="/map" element={<Suspense fallback={<div className="flex items-center justify-center h-screen">Loading map...</div>}><MapView /></Suspense>} />
                 <Route path="/farmer" element={<FarmerDashboard />} />
                 <Route path="/owner" element={<OwnerDashboard />} />
                 <Route path="/admin" element={<AdminPanel />} />
