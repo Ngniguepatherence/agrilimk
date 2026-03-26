@@ -21,8 +21,10 @@ export function Header() {
   ];
 
   if (isAuthenticated && user) {
-    if (user.role === "farmer" || user.role === "owner") {
-      navItems.push({ path: `/${user.role}`, label: t.nav.dashboard, icon: LayoutDashboard });
+    if (user.role === "farmer") {
+      navItems.push({ path: "/farmer", label: t.nav.dashboard, icon: LayoutDashboard });
+    } else if (user.role === "owner" || user.role === "collectivity") {
+      navItems.push({ path: "/owner", label: t.nav.dashboard, icon: LayoutDashboard });
     }
     if (user.role === "admin") {
       navItems.push({ path: "/admin", label: t.nav.admin, icon: Shield });
@@ -166,7 +168,7 @@ export function BottomNav() {
   const items = [
     { path: "/marketplace", label: t.nav.marketplace, icon: ShoppingCart },
     { path: "/map", label: t.nav.map, icon: MapPin },
-    { path: `/${user.role === "admin" ? "admin" : user.role}`, label: t.nav.dashboard, icon: LayoutDashboard },
+    { path: `/${user.role === "admin" ? "admin" : user.role === "collectivity" ? "owner" : user.role}`, label: t.nav.dashboard, icon: LayoutDashboard },
   ];
 
   return (
