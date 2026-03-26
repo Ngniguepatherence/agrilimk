@@ -10,7 +10,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, DollarSign, Package, TrendingUp, Check, X, Plus } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Calendar, DollarSign, Package, TrendingUp, Check, X, Plus, MapPin, Phone, Mail, ShieldCheck, Star, Wheat, User } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 
@@ -25,6 +26,7 @@ const OwnerDashboard = () => {
   const { t } = useLanguage();
   const { user } = useAuth();
   const [bookings, setBookings] = useState(mockBookings);
+  const [selectedBooking, setSelectedBooking] = useState<string | null>(null);
   const ownerEquipment = equipmentList.filter((eq) => eq.ownerName === "Commune de Thiès" || eq.ownerType === "municipality");
   const ownerBookings = bookings;
 
@@ -87,21 +89,66 @@ const OwnerDashboard = () => {
             pendingBookings.map((b) => (
               <Card key={b.id} className="rounded-2xl border-border/50 shadow-card">
                 <CardContent className="p-5">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
-                      <p className="font-bold text-base">{b.equipmentName}</p>
-                      <p className="text-sm text-muted-foreground mt-1">{b.farmerName} • {b.date} • {b.hectares} ha</p>
-                      <p className="text-sm text-muted-foreground">{b.farmLocation}</p>
-                      {b.instructions && <p className="text-xs text-muted-foreground mt-1 italic">"{b.instructions}"</p>}
-                      <p className="font-bold text-primary mt-2 text-lg">{b.totalPrice.toLocaleString()} FCFA</p>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button size="sm" className="rounded-xl gap-1" onClick={() => handleBookingAction(b.id, "accepted")}>
-                        <Check className="h-4 w-4" />{t.owner.accept}
-                      </Button>
-                      <Button size="sm" variant="outline" className="rounded-xl gap-1 text-destructive hover:bg-destructive/10" onClick={() => handleBookingAction(b.id, "rejected")}>
-                        <X className="h-4 w-4" />{t.owner.reject}
-                      </Button>
+                  <div className="flex flex-col gap-4">
+                    {/* Requester Profile */}
+                    {b.farmerProfile && (
+                      <div className="flex items-start gap-4 p-4 rounded-xl bg-muted/30 border border-border/30">
+                        <Avatar className="h-14 w-14 border-2 border-card shadow-sm">
+                          <AvatarImage src={b.farmerProfile.avatar} alt={b.farmerProfile.name} />
+                          <AvatarFallback>{b.farmerProfile.name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <p className="font-bold text-base">{b.farmerProfile.name}</p>
+                            {b.farmerProfile.idVerified ? (
+                              <Badge variant="outline" className="rounded-full bg-primary/10 text-primary border-primary/20 gap-1 text-xs">
+                                <ShieldCheck className="h-3 w-3" /> {t.auth.verified}
+                              </Badge>
+                            ) : (
+                              <Badge variant="outline" className="rounded-full bg-warning/10 text-warning border-warning/20 gap-1 text-xs">
+                                {t.auth.unverified}
+                              </Badge>
+                            )}
+                            <Badge variant="outline" className="rounded-full text-xs gap-1">
+                              <Star className="h-3 w-3 text-secondary" /> {b.farmerProfile.rating}
+                            </Badge>
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 mt-2 text-xs text-muted-foreground">
+                            <span className="flex items-center gap-1"><Phone className="h-3 w-3" />{b.farmerProfile.phone}</span>
+                            <span className="flex items-center gap-1"><Mail className="h-3 w-3" />{b.farmerProfile.email}</span>
+                            <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{b.farmerProfile.location}</span>
+                            <span className="flex items-center gap-1"><Wheat className="h-3 w-3" />{b.farmerProfile.farmSize}</span>
+                          </div>
+                          <div className="flex items-center gap-2 mt-2 flex-wrap">
+                            {b.farmerProfile.crops.map((crop) => (
+                              <Badge key={crop} variant="outline" className="rounded-full text-xs bg-primary/5 border-primary/10">{crop}</Badge>
+                            ))}
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-1.5">
+                            {t.owner.memberSince} {b.farmerProfile.joinedDate} • {b.farmerProfile.totalBookings} {t.owner.previousBookings}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Booking Details */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div>
+                        <p className="font-bold text-base">{b.equipmentName}</p>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          <Calendar className="h-3.5 w-3.5 inline mr-1" />{b.date} • {b.hectares} ha • <MapPin className="h-3.5 w-3.5 inline mr-1" />{b.farmLocation}
+                        </p>
+                        {b.instructions && <p className="text-xs text-muted-foreground mt-1 italic">"{b.instructions}"</p>}
+                        <p className="font-bold text-primary mt-2 text-lg">{b.totalPrice.toLocaleString()} FCFA</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button size="sm" className="rounded-xl gap-1" onClick={() => handleBookingAction(b.id, "accepted")}>
+                          <Check className="h-4 w-4" />{t.owner.accept}
+                        </Button>
+                        <Button size="sm" variant="outline" className="rounded-xl gap-1 text-destructive hover:bg-destructive/10" onClick={() => handleBookingAction(b.id, "rejected")}>
+                          <X className="h-4 w-4" />{t.owner.reject}
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -111,9 +158,17 @@ const OwnerDashboard = () => {
           {ownerBookings.filter((b) => b.status !== "pending").map((b) => (
             <Card key={b.id} className="rounded-2xl border-border/30 opacity-70">
               <CardContent className="p-4 flex items-center justify-between">
-                <div>
-                  <p className="font-medium text-sm">{b.equipmentName} — {b.farmerName}</p>
-                  <p className="text-xs text-muted-foreground">{b.date} • {b.totalPrice.toLocaleString()} FCFA</p>
+                <div className="flex items-center gap-3">
+                  {b.farmerProfile && (
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={b.farmerProfile.avatar} />
+                      <AvatarFallback className="text-xs">{b.farmerName.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                  )}
+                  <div>
+                    <p className="font-medium text-sm">{b.equipmentName} — {b.farmerName}</p>
+                    <p className="text-xs text-muted-foreground">{b.date} • {b.totalPrice.toLocaleString()} FCFA</p>
+                  </div>
                 </div>
                 <Badge variant="outline" className={`rounded-full ${statusColors[b.status]}`}>{t.booking[b.status as keyof typeof t.booking]}</Badge>
               </CardContent>
