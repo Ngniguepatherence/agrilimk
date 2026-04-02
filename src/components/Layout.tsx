@@ -17,6 +17,7 @@ export function Header() {
   const navItems = [
     { path: "/", label: t.nav.home, icon: Home },
     { path: "/marketplace", label: t.nav.marketplace, icon: ShoppingCart },
+    { path: "/products", label: (t as any).nav?.products || "Products", icon: ShoppingBasket },
     { path: "/map", label: t.nav.map, icon: MapPin },
   ];
 
