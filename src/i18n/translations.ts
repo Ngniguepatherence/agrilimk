@@ -113,6 +113,14 @@ export const translations = {
       assignOwner: "Assign Owner", platformManaged: "Platform Managed (AgriLink)",
       publishEquipment: "Publish Equipment", equipmentAdded: "Equipment published successfully!",
     },
+    products: {
+      title: "Products Marketplace", subtitle: "Buy fresh agricultural products directly from local farmers",
+      searchPlaceholder: "Search products...", filterCategory: "Category", allCategories: "All Categories",
+      vegetables: "Vegetables", fruits: "Fruits", cereals: "Cereals", legumes: "Legumes", roots: "Roots & Tubers", other: "Other",
+      organic: "Organic", available: "available", call: "Call", contact: "Contact",
+      contactSeller: "Contact Seller", aboutProduct: "About", messagePlaceholder: "Write your message...",
+      sendMessage: "Send", messageSent: "Message sent to seller!",
+    },
     common: { save: "Save", cancel: "Cancel", back: "Back", loading: "Loading...", noResults: "No results found" },
   },
   fr: {
