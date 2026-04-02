@@ -56,6 +56,11 @@ const mockProducts: Product[] = [
     sellerAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
     sellerVerified: true, location: "Thiès, Senegal",
     image: "https://images.unsplash.com/photo-1546470427-0d4db154ceb8?w=600&h=400&fit=crop",
+    images: [
+      "https://images.unsplash.com/photo-1546470427-0d4db154ceb8?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1561136594-7f68413baa99?w=600&h=400&fit=crop",
+    ],
     organic: true, rating: 4.8, postedDate: "2026-03-28",
   },
   {
@@ -67,6 +72,7 @@ const mockProducts: Product[] = [
     sellerAvatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
     sellerVerified: true, location: "Kaolack, Senegal",
     image: "https://images.unsplash.com/photo-1567892320421-1c657571ea4a?w=600&h=400&fit=crop",
+    images: ["https://images.unsplash.com/photo-1567892320421-1c657571ea4a?w=600&h=400&fit=crop"],
     organic: false, rating: 4.5, postedDate: "2026-03-25",
   },
   {
@@ -78,6 +84,7 @@ const mockProducts: Product[] = [
     sellerAvatar: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=150&h=150&fit=crop&crop=face",
     sellerVerified: false, location: "Saint-Louis, Senegal",
     image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=600&h=400&fit=crop",
+    images: ["https://images.unsplash.com/photo-1586201375761-83865001e31c?w=600&h=400&fit=crop"],
     organic: true, rating: 4.2, postedDate: "2026-03-30",
   },
   {
@@ -89,6 +96,7 @@ const mockProducts: Product[] = [
     sellerAvatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&crop=face",
     sellerVerified: true, location: "Fatick, Senegal",
     image: "https://images.unsplash.com/photo-1596097635092-6cf1ce388b23?w=600&h=400&fit=crop",
+    images: ["https://images.unsplash.com/photo-1596097635092-6cf1ce388b23?w=600&h=400&fit=crop"],
     organic: false, rating: 4.6, postedDate: "2026-03-29",
   },
   {
@@ -100,6 +108,10 @@ const mockProducts: Product[] = [
     sellerAvatar: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=150&h=150&fit=crop&crop=face",
     sellerVerified: true, location: "Ziguinchor, Senegal",
     image: "https://images.unsplash.com/photo-1553279768-865429fa0078?w=600&h=400&fit=crop",
+    images: [
+      "https://images.unsplash.com/photo-1553279768-865429fa0078?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=600&h=400&fit=crop",
+    ],
     organic: true, rating: 4.9, postedDate: "2026-04-01",
   },
   {
@@ -111,6 +123,7 @@ const mockProducts: Product[] = [
     sellerAvatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop&crop=face",
     sellerVerified: true, location: "Saint-Louis, Senegal",
     image: "https://images.unsplash.com/photo-1536304993881-460e4e4643f0?w=600&h=400&fit=crop",
+    images: ["https://images.unsplash.com/photo-1536304993881-460e4e4643f0?w=600&h=400&fit=crop"],
     organic: false, rating: 4.4, postedDate: "2026-03-27",
   },
   {
@@ -122,6 +135,7 @@ const mockProducts: Product[] = [
     sellerAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
     sellerVerified: true, location: "Thiès, Senegal",
     image: "https://images.unsplash.com/photo-1518977956812-cd3dbadaaf31?w=600&h=400&fit=crop",
+    images: ["https://images.unsplash.com/photo-1518977956812-cd3dbadaaf31?w=600&h=400&fit=crop"],
     organic: false, rating: 4.3, postedDate: "2026-03-26",
   },
   {
@@ -133,10 +147,10 @@ const mockProducts: Product[] = [
     sellerAvatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
     sellerVerified: true, location: "Kolda, Senegal",
     image: "https://images.unsplash.com/photo-1598512752271-33f913a5af13?w=600&h=400&fit=crop",
+    images: ["https://images.unsplash.com/photo-1598512752271-33f913a5af13?w=600&h=400&fit=crop"],
     organic: true, rating: 4.1, postedDate: "2026-03-31",
   },
 ];
-
 const ProductsMarketplace = () => {
   const { t, language } = useLanguage();
   const { isAuthenticated } = useAuth();
