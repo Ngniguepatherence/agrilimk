@@ -125,7 +125,7 @@ export const translations = {
   },
   fr: {
     nav: {
-      home: "Accueil", marketplace: "Équipements", map: "Carte", dashboard: "Tableau de bord",
+      home: "Accueil", marketplace: "Équipements", products: "Produits", map: "Carte", dashboard: "Tableau de bord",
       admin: "Admin", login: "Connexion", signup: "Inscription", logout: "Déconnexion", language: "EN",
     },
     landing: {
