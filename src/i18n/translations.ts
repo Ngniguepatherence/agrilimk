@@ -235,6 +235,14 @@ export const translations = {
       assignOwner: "Assigner un propriétaire", platformManaged: "Géré par la Plateforme (AgriLink)",
       publishEquipment: "Publier l'Équipement", equipmentAdded: "Équipement publié avec succès !",
     },
+    products: {
+      title: "Marché des Produits", subtitle: "Achetez des produits agricoles frais directement auprès des agriculteurs locaux",
+      searchPlaceholder: "Rechercher des produits...", filterCategory: "Catégorie", allCategories: "Toutes les catégories",
+      vegetables: "Légumes", fruits: "Fruits", cereals: "Céréales", legumes: "Légumineuses", roots: "Racines & Tubercules", other: "Autre",
+      organic: "Bio", available: "disponible", call: "Appeler", contact: "Contacter",
+      contactSeller: "Contacter le Vendeur", aboutProduct: "À propos", messagePlaceholder: "Écrivez votre message...",
+      sendMessage: "Envoyer", messageSent: "Message envoyé au vendeur !",
+    },
     common: { save: "Enregistrer", cancel: "Annuler", back: "Retour", loading: "Chargement...", noResults: "Aucun résultat trouvé" },
   },
 } as const;
