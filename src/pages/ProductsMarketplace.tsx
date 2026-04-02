@@ -31,6 +31,7 @@ export interface Product {
   sellerVerified: boolean;
   location: string;
   image: string;
+  images: string[];
   organic: boolean;
   rating: number;
   postedDate: string;
