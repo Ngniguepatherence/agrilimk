@@ -4,7 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Home, ShoppingCart, MapPin, LayoutDashboard, Shield, LogOut, Globe } from "lucide-react";
+import { Menu, Home, ShoppingCart, ShoppingBasket, MapPin, LayoutDashboard, Shield, LogOut, Globe } from "lucide-react";
 import logoImg from "@/assets/logo.png";
 
 export function Header() {
