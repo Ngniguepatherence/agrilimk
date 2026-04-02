@@ -1,20 +1,31 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { mockBookings, equipmentList, equipmentTypeIcons } from "@/data/mockData";
+import { Product, ProductCategory } from "@/pages/ProductsMarketplace";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 import {
   ShoppingCart, MapPin, Calendar, ArrowRight, TrendingUp, Clock,
   CheckCircle2, XCircle, DollarSign, Leaf, Sun, CloudRain, Wind,
-  Star, ShieldCheck, Phone, Mail, Edit, Bell, Wheat
+  Star, ShieldCheck, Phone, Mail, Edit, Bell, Wheat, Plus,
+  ImagePlus, Trash2, Package, ChevronLeft, ChevronRight, X,
+  ShoppingBasket
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 
 const statusColors: Record<string, string> = {
   pending: "bg-warning/10 text-warning border-warning/20",
@@ -30,8 +41,72 @@ const statusIcons: Record<string, React.ElementType> = {
   completed: CheckCircle2,
 };
 
+const categoryOptions: { value: ProductCategory; labelEn: string; labelFr: string }[] = [
+  { value: "vegetables", labelEn: "Vegetables", labelFr: "Légumes" },
+  { value: "fruits", labelEn: "Fruits", labelFr: "Fruits" },
+  { value: "cereals", labelEn: "Cereals", labelFr: "Céréales" },
+  { value: "legumes", labelEn: "Legumes", labelFr: "Légumineuses" },
+  { value: "roots", labelEn: "Roots & Tubers", labelFr: "Racines & Tubercules" },
+  { value: "other", labelEn: "Other", labelFr: "Autre" },
+];
+
+// Sample farmer products
+const initialFarmerProducts: Product[] = [
+  {
+    id: "fp1", name: "Fresh Tomatoes", nameFr: "Tomates fraîches", category: "vegetables",
+    price: 500, unit: "kg", currency: "FCFA", quantity: 200,
+    description: "Fresh ripe tomatoes from my farm.", descriptionFr: "Tomates mûres fraîches de ma ferme.",
+    sellerName: "Amadou Diallo", sellerPhone: "+221 77 123 4567",
+    sellerAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+    sellerVerified: true, location: "Thiès, Senegal",
+    image: "https://images.unsplash.com/photo-1546470427-0d4db154ceb8?w=600&h=400&fit=crop",
+    images: [
+      "https://images.unsplash.com/photo-1546470427-0d4db154ceb8?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1561136594-7f68413baa99?w=600&h=400&fit=crop",
+    ],
+    organic: true, rating: 4.8, postedDate: "2026-03-28",
+  },
+  {
+    id: "fp2", name: "Onions", nameFr: "Oignons", category: "vegetables",
+    price: 400, unit: "kg", currency: "FCFA", quantity: 600,
+    description: "Large red onions. Long shelf life.", descriptionFr: "Gros oignons rouges. Longue conservation.",
+    sellerName: "Amadou Diallo", sellerPhone: "+221 77 123 4567",
+    sellerAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+    sellerVerified: true, location: "Thiès, Senegal",
+    image: "https://images.unsplash.com/photo-1518977956812-cd3dbadaaf31?w=600&h=400&fit=crop",
+    images: [
+      "https://images.unsplash.com/photo-1518977956812-cd3dbadaaf31?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1587049352851-8d4e89133924?w=600&h=400&fit=crop",
+    ],
+    organic: false, rating: 4.3, postedDate: "2026-03-26",
+  },
+];
+
+// Image carousel component for product cards
+function ProductImageCarousel({ images, alt }: { images: string[]; alt: string }) {
+  if (images.length <= 1) {
+    return (
+      <img src={images[0]} alt={alt} className="w-full h-full object-cover" loading="lazy" />
+    );
+  }
+  return (
+    <Carousel className="w-full h-full" opts={{ loop: true }}>
+      <CarouselContent className="-ml-0 h-full">
+        {images.map((img, i) => (
+          <CarouselItem key={i} className="pl-0">
+            <img src={img} alt={`${alt} ${i + 1}`} className="w-full h-full object-cover" loading="lazy" />
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+      <CarouselPrevious className="left-2 h-7 w-7 bg-card/80 backdrop-blur-sm border-0 shadow-md" />
+      <CarouselNext className="right-2 h-7 w-7 bg-card/80 backdrop-blur-sm border-0 shadow-md" />
+    </Carousel>
+  );
+}
+
 const FarmerDashboard = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { user } = useAuth();
   const bookings = mockBookings.filter((b) => b.farmerId === user?.id || b.farmerId === "f1");
   const active = bookings.filter((b) => b.status === "pending" || b.status === "accepted");
@@ -39,10 +114,20 @@ const FarmerDashboard = () => {
   const totalSpent = bookings.filter((b) => b.status === "completed" || b.status === "accepted").reduce((s, b) => s + b.totalPrice, 0);
   const totalHectares = bookings.reduce((s, b) => s + b.hectares, 0);
 
+  // Product management state
+  const [farmerProducts, setFarmerProducts] = useState<Product[]>(initialFarmerProducts);
+  const [showAddProduct, setShowAddProduct] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [productForm, setProductForm] = useState({
+    name: "", nameFr: "", category: "vegetables" as ProductCategory,
+    price: "", unit: "kg", quantity: "", description: "", descriptionFr: "",
+    organic: false,
+  });
+  const [productImages, setProductImages] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   // Mock weather
   const weather = { temp: 32, condition: "Ensoleillé", humidity: 45, wind: 12 };
-
-  // Recommended equipment
   const recommended = equipmentList.filter((eq) => eq.available).slice(0, 3);
 
   const statCards = [
@@ -51,6 +136,91 @@ const FarmerDashboard = () => {
     { label: t.farmer.hectaresCultivated, value: totalHectares, icon: Wheat, color: "text-primary" },
     { label: t.farmer.activeNow, value: active.length, icon: TrendingUp, color: "text-info" },
   ];
+
+  const resetForm = () => {
+    setProductForm({ name: "", nameFr: "", category: "vegetables", price: "", unit: "kg", quantity: "", description: "", descriptionFr: "", organic: false });
+    setProductImages([]);
+    setEditingProduct(null);
+  };
+
+  const openAddDialog = () => {
+    resetForm();
+    setShowAddProduct(true);
+  };
+
+  const openEditDialog = (product: Product) => {
+    setEditingProduct(product);
+    setProductForm({
+      name: product.name, nameFr: product.nameFr, category: product.category,
+      price: String(product.price), unit: product.unit, quantity: String(product.quantity),
+      description: product.description, descriptionFr: product.descriptionFr,
+      organic: product.organic,
+    });
+    setProductImages(product.images);
+    setShowAddProduct(true);
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    // Mock: use placeholder URLs for uploaded images
+    const mockImageUrls = [
+      "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1506484381205-f7945b68db56?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1595855759920-86582396756a?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=600&h=400&fit=crop",
+    ];
+    const newImages = Array.from(files).slice(0, 5 - productImages.length).map((_, i) =>
+      mockImageUrls[(productImages.length + i) % mockImageUrls.length]
+    );
+    setProductImages(prev => [...prev, ...newImages].slice(0, 5));
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const removeImage = (index: number) => {
+    setProductImages(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleSaveProduct = () => {
+    if (!productForm.name || !productForm.price || productImages.length === 0) {
+      toast.error(language === "fr" ? "Veuillez remplir tous les champs et ajouter au moins une image" : "Please fill all fields and add at least one image");
+      return;
+    }
+
+    if (editingProduct) {
+      setFarmerProducts(prev => prev.map(p => p.id === editingProduct.id ? {
+        ...p,
+        name: productForm.name, nameFr: productForm.nameFr || productForm.name,
+        category: productForm.category, price: Number(productForm.price),
+        unit: productForm.unit, quantity: Number(productForm.quantity),
+        description: productForm.description, descriptionFr: productForm.descriptionFr || productForm.description,
+        organic: productForm.organic, images: productImages, image: productImages[0],
+      } : p));
+      toast.success(t.farmer.productUpdated);
+    } else {
+      const newProduct: Product = {
+        id: `fp-${Date.now()}`,
+        name: productForm.name, nameFr: productForm.nameFr || productForm.name,
+        category: productForm.category, price: Number(productForm.price),
+        unit: productForm.unit, currency: "FCFA", quantity: Number(productForm.quantity),
+        description: productForm.description, descriptionFr: productForm.descriptionFr || productForm.description,
+        sellerName: user?.name || "Farmer", sellerPhone: user?.phone || "",
+        sellerAvatar: user?.avatar || "", sellerVerified: user?.idVerified || false,
+        location: user?.location || "", image: productImages[0], images: productImages,
+        organic: productForm.organic, rating: 0, postedDate: new Date().toISOString().split("T")[0],
+      };
+      setFarmerProducts(prev => [newProduct, ...prev]);
+      toast.success(t.farmer.productAdded);
+    }
+    setShowAddProduct(false);
+    resetForm();
+  };
+
+  const handleDeleteProduct = (id: string) => {
+    setFarmerProducts(prev => prev.filter(p => p.id !== id));
+    toast.success(t.farmer.productDeleted);
+  };
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-5xl">
@@ -93,7 +263,7 @@ const FarmerDashboard = () => {
             <Card className="rounded-2xl border-border/50 shadow-card">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <div className={`h-9 w-9 rounded-xl bg-muted flex items-center justify-center`}>
+                  <div className="h-9 w-9 rounded-xl bg-muted flex items-center justify-center">
                     <stat.icon className={`h-4.5 w-4.5 ${stat.color}`} />
                   </div>
                 </div>
@@ -132,10 +302,10 @@ const FarmerDashboard = () => {
             </div>
           </motion.div>
 
-          {/* Bookings Tabs */}
+          {/* Main Tabs: Bookings + Products */}
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
             <Tabs defaultValue="active" className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between flex-wrap gap-2">
                 <TabsList className="rounded-xl bg-muted/50 p-1 h-auto">
                   <TabsTrigger value="active" className="rounded-lg data-[state=active]:shadow-sm text-xs sm:text-sm">
                     {t.farmer.activeBookings} ({active.length})
@@ -143,9 +313,14 @@ const FarmerDashboard = () => {
                   <TabsTrigger value="history" className="rounded-lg data-[state=active]:shadow-sm text-xs sm:text-sm">
                     {t.farmer.bookingHistory} ({history.length})
                   </TabsTrigger>
+                  <TabsTrigger value="products" className="rounded-lg data-[state=active]:shadow-sm text-xs sm:text-sm gap-1">
+                    <ShoppingBasket className="h-3.5 w-3.5" />
+                    {t.farmer.myProducts} ({farmerProducts.length})
+                  </TabsTrigger>
                 </TabsList>
               </div>
 
+              {/* Active Bookings Tab */}
               <TabsContent value="active" className="space-y-3 mt-0">
                 {active.length === 0 ? (
                   <Card className="rounded-2xl border-border/50">
@@ -165,9 +340,7 @@ const FarmerDashboard = () => {
                       <Card key={b.id} className="rounded-2xl border-border/50 shadow-card hover:shadow-elevated transition-all">
                         <CardContent className="p-4">
                           <div className="flex gap-3">
-                            {eq && (
-                              <img src={eq.image} alt={b.equipmentName} className="h-20 w-20 rounded-xl object-cover shrink-0" />
-                            )}
+                            {eq && <img src={eq.image} alt={b.equipmentName} className="h-20 w-20 rounded-xl object-cover shrink-0" />}
                             <div className="flex-1 min-w-0">
                               <div className="flex items-start justify-between gap-2">
                                 <div>
@@ -198,6 +371,7 @@ const FarmerDashboard = () => {
                 )}
               </TabsContent>
 
+              {/* History Tab */}
               <TabsContent value="history" className="space-y-3 mt-0">
                 {history.length === 0 ? (
                   <Card className="rounded-2xl border-border/50">
@@ -221,6 +395,100 @@ const FarmerDashboard = () => {
                       </Card>
                     );
                   })
+                )}
+              </TabsContent>
+
+              {/* My Products Tab */}
+              <TabsContent value="products" className="space-y-4 mt-0">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-muted-foreground">{t.farmer.manageProducts}</p>
+                  <Button size="sm" className="rounded-xl gap-1.5" onClick={openAddDialog}>
+                    <Plus className="h-4 w-4" /> {t.farmer.addProduct}
+                  </Button>
+                </div>
+
+                {farmerProducts.length === 0 ? (
+                  <Card className="rounded-2xl border-border/50">
+                    <CardContent className="p-10 text-center">
+                      <Package className="h-14 w-14 text-muted-foreground/20 mx-auto mb-4" />
+                      <p className="font-semibold text-sm mb-1">{t.farmer.noProducts}</p>
+                      <p className="text-xs text-muted-foreground mb-4">{t.farmer.addFirstProduct}</p>
+                      <Button className="rounded-xl gap-1.5" onClick={openAddDialog}>
+                        <Plus className="h-4 w-4" /> {t.farmer.addProduct}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    {farmerProducts.map((product) => {
+                      const name = language === "fr" ? product.nameFr : product.name;
+                      return (
+                        <Card key={product.id} className="rounded-2xl border-border/50 shadow-card overflow-hidden group">
+                          {/* Image Carousel */}
+                          <div className="aspect-[16/10] relative overflow-hidden">
+                            <ProductImageCarousel images={product.images} alt={name} />
+                            {product.organic && (
+                              <Badge className="absolute top-3 left-3 z-10 bg-primary/90 text-primary-foreground backdrop-blur-sm rounded-full px-3">
+                                🌿 {language === "fr" ? "Bio" : "Organic"}
+                              </Badge>
+                            )}
+                            {product.images.length > 1 && (
+                              <div className="absolute bottom-2 right-2 z-10 bg-card/80 backdrop-blur-sm rounded-full px-2 py-0.5 text-[10px] font-medium">
+                                {product.images.length} photos
+                              </div>
+                            )}
+                          </div>
+                          <CardContent className="p-4">
+                            <div className="flex items-start justify-between gap-2 mb-2">
+                              <div>
+                                <h3 className="font-bold text-sm">{name}</h3>
+                                <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
+                                  <MapPin className="h-3 w-3" /> {product.location}
+                                </p>
+                              </div>
+                              <div className="text-right">
+                                <p className="font-bold text-primary text-sm">{product.price.toLocaleString()} FCFA</p>
+                                <p className="text-[10px] text-muted-foreground">/{product.unit}</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
+                              <span>{product.quantity} {product.unit} {language === "fr" ? "disponible" : "available"}</span>
+                              {product.rating > 0 && (
+                                <>
+                                  <span>•</span>
+                                  <span className="flex items-center gap-0.5"><Star className="h-3 w-3 text-secondary fill-secondary" /> {product.rating}</span>
+                                </>
+                              )}
+                            </div>
+                            <div className="flex gap-2">
+                              <Button variant="outline" size="sm" className="flex-1 rounded-xl text-xs gap-1" onClick={() => openEditDialog(product)}>
+                                <Edit className="h-3 w-3" /> {t.farmer.editProduct}
+                              </Button>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="outline" size="sm" className="rounded-xl text-xs text-destructive hover:text-destructive gap-1">
+                                    <Trash2 className="h-3 w-3" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent className="rounded-2xl">
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>{t.farmer.deleteProduct}</AlertDialogTitle>
+                                    <AlertDialogDescription>{t.farmer.confirmDelete}</AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel className="rounded-xl">{t.common.cancel}</AlertDialogCancel>
+                                    <AlertDialogAction className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => handleDeleteProduct(product.id)}>
+                                      {t.farmer.deleteProduct}
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
                 )}
               </TabsContent>
             </Tabs>
@@ -324,6 +592,151 @@ const FarmerDashboard = () => {
           </motion.div>
         </div>
       </div>
+
+      {/* Add / Edit Product Dialog */}
+      <Dialog open={showAddProduct} onOpenChange={(o) => { if (!o) { setShowAddProduct(false); resetForm(); } }}>
+        <DialogContent className="rounded-2xl max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Package className="h-5 w-5 text-primary" />
+              {editingProduct ? t.farmer.editProduct : t.farmer.addProduct}
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            {/* Images Upload */}
+            <div>
+              <Label className="text-sm font-medium mb-2 block">{t.farmer.productImages}</Label>
+              <p className="text-xs text-muted-foreground mb-3">{t.farmer.uploadImagesHint}</p>
+              
+              {/* Image Previews */}
+              {productImages.length > 0 && (
+                <div className="mb-3">
+                  <Carousel className="w-full" opts={{ loop: true }}>
+                    <CarouselContent>
+                      {productImages.map((img, i) => (
+                        <CarouselItem key={i}>
+                          <div className="relative aspect-[16/10] rounded-xl overflow-hidden bg-muted">
+                            <img src={img} alt={`Preview ${i + 1}`} className="w-full h-full object-cover" />
+                            <button
+                              onClick={() => removeImage(i)}
+                              className="absolute top-2 right-2 h-7 w-7 rounded-full bg-destructive/90 text-destructive-foreground flex items-center justify-center hover:bg-destructive transition-colors"
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                            <div className="absolute bottom-2 left-2 bg-card/80 backdrop-blur-sm rounded-full px-2.5 py-0.5 text-xs font-medium">
+                              {i + 1}/{productImages.length}
+                            </div>
+                          </div>
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                    {productImages.length > 1 && (
+                      <>
+                        <CarouselPrevious className="left-2 h-7 w-7" />
+                        <CarouselNext className="right-2 h-7 w-7" />
+                      </>
+                    )}
+                  </Carousel>
+                </div>
+              )}
+
+              {productImages.length < 5 && (
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  className="border-2 border-dashed border-border/60 rounded-xl p-6 text-center cursor-pointer hover:border-primary/40 hover:bg-primary/5 transition-all"
+                >
+                  <ImagePlus className="h-8 w-8 text-muted-foreground/40 mx-auto mb-2" />
+                  <p className="text-xs text-muted-foreground">{t.farmer.uploadImages}</p>
+                  <p className="text-[10px] text-muted-foreground mt-1">{productImages.length}/5 {t.farmer.imageUploaded}</p>
+                </div>
+              )}
+              <input ref={fileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handleImageUpload} />
+            </div>
+
+            {/* Product Details */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="col-span-2 sm:col-span-1">
+                <Label className="text-xs">{t.farmer.productName} (EN)</Label>
+                <Input className="rounded-xl mt-1" value={productForm.name}
+                  onChange={(e) => setProductForm(p => ({ ...p, name: e.target.value }))} />
+              </div>
+              <div className="col-span-2 sm:col-span-1">
+                <Label className="text-xs">{t.farmer.productName} (FR)</Label>
+                <Input className="rounded-xl mt-1" value={productForm.nameFr}
+                  onChange={(e) => setProductForm(p => ({ ...p, nameFr: e.target.value }))} />
+              </div>
+            </div>
+
+            <div>
+              <Label className="text-xs">{t.farmer.productCategory}</Label>
+              <Select value={productForm.category} onValueChange={(v) => setProductForm(p => ({ ...p, category: v as ProductCategory }))}>
+                <SelectTrigger className="rounded-xl mt-1">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {categoryOptions.map(c => (
+                    <SelectItem key={c.value} value={c.value}>{language === "fr" ? c.labelFr : c.labelEn}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3">
+              <div>
+                <Label className="text-xs">{t.farmer.productPrice} (FCFA)</Label>
+                <Input type="number" className="rounded-xl mt-1" value={productForm.price}
+                  onChange={(e) => setProductForm(p => ({ ...p, price: e.target.value }))} />
+              </div>
+              <div>
+                <Label className="text-xs">{t.farmer.productUnit}</Label>
+                <Select value={productForm.unit} onValueChange={(v) => setProductForm(p => ({ ...p, unit: v }))}>
+                  <SelectTrigger className="rounded-xl mt-1"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="kg">kg</SelectItem>
+                    <SelectItem value="tonne">Tonne</SelectItem>
+                    <SelectItem value="sack">{language === "fr" ? "Sac" : "Sack"}</SelectItem>
+                    <SelectItem value="piece">{language === "fr" ? "Pièce" : "Piece"}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label className="text-xs">{t.farmer.productQuantity}</Label>
+                <Input type="number" className="rounded-xl mt-1" value={productForm.quantity}
+                  onChange={(e) => setProductForm(p => ({ ...p, quantity: e.target.value }))} />
+              </div>
+            </div>
+
+            <div>
+              <Label className="text-xs">{t.farmer.productDescription} (EN)</Label>
+              <Textarea className="rounded-xl mt-1" rows={2} value={productForm.description}
+                onChange={(e) => setProductForm(p => ({ ...p, description: e.target.value }))} />
+            </div>
+            <div>
+              <Label className="text-xs">{t.farmer.productDescription} (FR)</Label>
+              <Textarea className="rounded-xl mt-1" rows={2} value={productForm.descriptionFr}
+                onChange={(e) => setProductForm(p => ({ ...p, descriptionFr: e.target.value }))} />
+            </div>
+
+            <div className="flex items-center gap-3">
+              <Switch checked={productForm.organic} onCheckedChange={(v) => setProductForm(p => ({ ...p, organic: v }))} />
+              <Label className="text-sm flex items-center gap-1.5">
+                <Leaf className="h-4 w-4 text-primary" /> {t.farmer.productOrganic}
+              </Label>
+            </div>
+          </div>
+
+          <DialogFooter className="mt-4 gap-2">
+            <Button variant="outline" className="rounded-xl" onClick={() => { setShowAddProduct(false); resetForm(); }}>
+              {t.common.cancel}
+            </Button>
+            <Button className="rounded-xl gap-1.5" onClick={handleSaveProduct}>
+              <Plus className="h-4 w-4" />
+              {editingProduct ? t.farmer.updateProduct : t.farmer.publishProduct}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
