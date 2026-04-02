@@ -3,7 +3,7 @@ export type Language = "en" | "fr";
 export const translations = {
   en: {
     nav: {
-      home: "Home", marketplace: "Equipment", map: "Map", dashboard: "Dashboard",
+      home: "Home", marketplace: "Equipment", products: "Products", map: "Map", dashboard: "Dashboard",
       admin: "Admin", login: "Log In", signup: "Sign Up", logout: "Log Out", language: "FR",
     },
     landing: {
