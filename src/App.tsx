@@ -16,6 +16,7 @@ const MapView = lazy(() => import("./pages/MapView"));
 import FarmerDashboard from "./pages/FarmerDashboard";
 import OwnerDashboard from "./pages/OwnerDashboard";
 import AdminPanel from "./pages/AdminPanel";
+import ProductsMarketplace from "./pages/ProductsMarketplace";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
