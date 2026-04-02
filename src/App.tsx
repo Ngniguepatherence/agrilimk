@@ -16,6 +16,7 @@ const MapView = lazy(() => import("./pages/MapView"));
 import FarmerDashboard from "./pages/FarmerDashboard";
 import OwnerDashboard from "./pages/OwnerDashboard";
 import AdminPanel from "./pages/AdminPanel";
+import ProductsMarketplace from "./pages/ProductsMarketplace";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,6 +40,7 @@ const App = () => (
                 <Route path="/farmer" element={<FarmerDashboard />} />
                 <Route path="/owner" element={<OwnerDashboard />} />
                 <Route path="/admin" element={<AdminPanel />} />
+                <Route path="/products" element={<ProductsMarketplace />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Layout>

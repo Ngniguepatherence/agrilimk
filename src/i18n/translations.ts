@@ -3,7 +3,7 @@ export type Language = "en" | "fr";
 export const translations = {
   en: {
     nav: {
-      home: "Home", marketplace: "Equipment", map: "Map", dashboard: "Dashboard",
+      home: "Home", marketplace: "Equipment", products: "Products", map: "Map", dashboard: "Dashboard",
       admin: "Admin", login: "Log In", signup: "Sign Up", logout: "Log Out", language: "FR",
     },
     landing: {
@@ -113,11 +113,19 @@ export const translations = {
       assignOwner: "Assign Owner", platformManaged: "Platform Managed (AgriLink)",
       publishEquipment: "Publish Equipment", equipmentAdded: "Equipment published successfully!",
     },
+    products: {
+      title: "Products Marketplace", subtitle: "Buy fresh agricultural products directly from local farmers",
+      searchPlaceholder: "Search products...", filterCategory: "Category", allCategories: "All Categories",
+      vegetables: "Vegetables", fruits: "Fruits", cereals: "Cereals", legumes: "Legumes", roots: "Roots & Tubers", other: "Other",
+      organic: "Organic", available: "available", call: "Call", contact: "Contact",
+      contactSeller: "Contact Seller", aboutProduct: "About", messagePlaceholder: "Write your message...",
+      sendMessage: "Send", messageSent: "Message sent to seller!",
+    },
     common: { save: "Save", cancel: "Cancel", back: "Back", loading: "Loading...", noResults: "No results found" },
   },
   fr: {
     nav: {
-      home: "Accueil", marketplace: "Équipements", map: "Carte", dashboard: "Tableau de bord",
+      home: "Accueil", marketplace: "Équipements", products: "Produits", map: "Carte", dashboard: "Tableau de bord",
       admin: "Admin", login: "Connexion", signup: "Inscription", logout: "Déconnexion", language: "EN",
     },
     landing: {
@@ -226,6 +234,14 @@ export const translations = {
       addEquipmentDesc: "En tant qu'admin, vous pouvez ajouter des équipements directement à la plateforme. Ces équipements seront gérés par AgriLink.",
       assignOwner: "Assigner un propriétaire", platformManaged: "Géré par la Plateforme (AgriLink)",
       publishEquipment: "Publier l'Équipement", equipmentAdded: "Équipement publié avec succès !",
+    },
+    products: {
+      title: "Marché des Produits", subtitle: "Achetez des produits agricoles frais directement auprès des agriculteurs locaux",
+      searchPlaceholder: "Rechercher des produits...", filterCategory: "Catégorie", allCategories: "Toutes les catégories",
+      vegetables: "Légumes", fruits: "Fruits", cereals: "Céréales", legumes: "Légumineuses", roots: "Racines & Tubercules", other: "Autre",
+      organic: "Bio", available: "disponible", call: "Appeler", contact: "Contacter",
+      contactSeller: "Contacter le Vendeur", aboutProduct: "À propos", messagePlaceholder: "Écrivez votre message...",
+      sendMessage: "Envoyer", messageSent: "Message envoyé au vendeur !",
     },
     common: { save: "Enregistrer", cancel: "Annuler", back: "Retour", loading: "Chargement...", noResults: "Aucun résultat trouvé" },
   },
