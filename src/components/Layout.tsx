@@ -4,7 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Home, ShoppingCart, ShoppingBasket, MapPin, LayoutDashboard, Shield, LogOut, Globe } from "lucide-react";
+import { Menu, Home, ShoppingCart, ShoppingBasket, MapPin, LayoutDashboard, Shield, LogOut, Globe, User } from "lucide-react";
 import logoImg from "@/assets/logo.png";
 
 export function Header() {
@@ -35,7 +35,7 @@ export function Header() {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <header className="sticky top-0 z-50 glass">
+    <header className="sticky top-0 z-50 glass hidden md:block">
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2.5">
           <img src={logoImg} alt="AgriLink" className="h-9 w-9" />
@@ -45,8 +45,7 @@ export function Header() {
           </span>
         </Link>
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-1">
+        <nav className="flex items-center gap-1">
           {navItems.map((item) => (
             <Link
               key={item.path}
@@ -62,7 +61,7 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="hidden md:flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <Button
             variant="ghost"
             size="sm"
@@ -73,15 +72,23 @@ export function Header() {
             {t.nav.language}
           </Button>
           {isAuthenticated ? (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => { logout(); navigate("/"); }}
-              className="gap-1.5 text-muted-foreground hover:text-foreground rounded-full"
-            >
-              <LogOut className="h-4 w-4" />
-              {t.nav.logout}
-            </Button>
+            <div className="flex items-center gap-1">
+              <Link to="/profile">
+                <Button variant="ghost" size="sm" className="gap-1.5 rounded-full text-muted-foreground hover:text-foreground">
+                  <User className="h-4 w-4" />
+                  {user?.name?.split(" ")[0]}
+                </Button>
+              </Link>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => { logout(); navigate("/"); }}
+                className="gap-1.5 text-muted-foreground hover:text-foreground rounded-full"
+              >
+                <LogOut className="h-4 w-4" />
+                {t.nav.logout}
+              </Button>
+            </div>
           ) : (
             <>
               <Link to="/login">
@@ -93,66 +100,46 @@ export function Header() {
             </>
           )}
         </div>
+      </div>
+    </header>
+  );
+}
 
-        {/* Mobile Menu */}
-        <div className="flex md:hidden items-center gap-1">
+export function MobileTopBar() {
+  const { language, setLanguage } = useLanguage();
+  const { user, isAuthenticated } = useAuth();
+  const location = useLocation();
+
+  // Hide on landing if not authenticated
+  const isLanding = location.pathname === "/";
+
+  return (
+    <header className="sticky top-0 z-50 glass md:hidden">
+      <div className="flex h-14 items-center justify-between px-4">
+        <Link to="/" className="flex items-center gap-2">
+          <img src={logoImg} alt="AgriLink" className="h-8 w-8" />
+          <span className="font-bold text-lg tracking-tight">
+            <span className="text-primary">Agri</span>
+            <span className="text-secondary">Link</span>
+          </span>
+        </Link>
+
+        <div className="flex items-center gap-1">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setLanguage(language === "en" ? "fr" : "en")}
-            className="rounded-full text-muted-foreground"
+            className="rounded-full text-muted-foreground h-9 w-9"
           >
             <Globe className="h-4 w-4" />
           </Button>
-          <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <Menu className="h-5 w-5" />
+          {isAuthenticated && (
+            <Link to="/profile">
+              <Button variant="ghost" size="icon" className="rounded-full h-9 w-9">
+                <User className="h-4 w-4" />
               </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-72 pt-12">
-              <nav className="flex flex-col gap-1">
-                {navItems.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <Link
-                      key={item.path}
-                      to={item.path}
-                      onClick={() => setOpen(false)}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all ${
-                        isActive(item.path)
-                          ? "bg-primary text-primary-foreground"
-                          : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                      }`}
-                    >
-                      <Icon className="h-5 w-5" />
-                      {item.label}
-                    </Link>
-                  );
-                })}
-                <div className="h-px bg-border my-3" />
-                {isAuthenticated ? (
-                  <Button
-                    variant="ghost"
-                    onClick={() => { logout(); navigate("/"); setOpen(false); }}
-                    className="justify-start gap-3 px-4 py-3 h-auto rounded-xl text-muted-foreground"
-                  >
-                    <LogOut className="h-5 w-5" />
-                    {t.nav.logout}
-                  </Button>
-                ) : (
-                  <div className="space-y-2">
-                    <Link to="/login" onClick={() => setOpen(false)}>
-                      <Button variant="outline" className="w-full rounded-xl">{t.nav.login}</Button>
-                    </Link>
-                    <Link to="/signup" onClick={() => setOpen(false)}>
-                      <Button className="w-full rounded-xl">{t.nav.signup}</Button>
-                    </Link>
-                  </div>
-                )}
-              </nav>
-            </SheetContent>
-          </Sheet>
+            </Link>
+          )}
         </div>
       </div>
     </header>
@@ -161,20 +148,32 @@ export function Header() {
 
 export function BottomNav() {
   const { t } = useLanguage();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const location = useLocation();
 
-  if (!user) return null;
-
-  const items = [
-    { path: "/marketplace", label: t.nav.marketplace, icon: ShoppingCart },
-    { path: "/map", label: t.nav.map, icon: MapPin },
-    { path: `/${user.role === "admin" ? "admin" : user.role === "collectivity" ? "owner" : user.role}`, label: t.nav.dashboard, icon: LayoutDashboard },
-  ];
+  const items = isAuthenticated && user
+    ? [
+        { path: "/", label: t.nav.home, icon: Home },
+        { path: "/marketplace", label: t.nav.marketplace, icon: ShoppingCart },
+        { path: "/products", label: (t as any).nav?.products || "Products", icon: ShoppingBasket },
+        { path: "/map", label: t.nav.map, icon: MapPin },
+        {
+          path: `/${user.role === "admin" ? "admin" : user.role === "collectivity" ? "owner" : user.role}`,
+          label: t.nav.dashboard,
+          icon: LayoutDashboard,
+        },
+      ]
+    : [
+        { path: "/", label: t.nav.home, icon: Home },
+        { path: "/marketplace", label: t.nav.marketplace, icon: ShoppingCart },
+        { path: "/products", label: (t as any).nav?.products || "Products", icon: ShoppingBasket },
+        { path: "/map", label: t.nav.map, icon: MapPin },
+        { path: "/login", label: t.nav.login, icon: User },
+      ];
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 glass md:hidden safe-area-bottom">
-      <div className="flex justify-around py-2 px-2">
+      <div className="flex justify-around py-1.5 px-1">
         {items.map((item) => {
           const Icon = item.icon;
           const active = location.pathname === item.path;
@@ -182,7 +181,7 @@ export function BottomNav() {
             <Link
               key={item.path}
               to={item.path}
-              className={`flex flex-col items-center gap-0.5 px-4 py-1.5 rounded-xl text-xs font-medium transition-all ${
+              className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl text-[10px] font-medium transition-all ${
                 active ? "text-primary" : "text-muted-foreground"
               }`}
             >
@@ -197,12 +196,12 @@ export function BottomNav() {
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated } = useAuth();
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className={`flex-1 ${isAuthenticated ? "pb-20 md:pb-0" : ""}`}>{children}</main>
-      {isAuthenticated && <BottomNav />}
+      <MobileTopBar />
+      <main className="flex-1 pb-16 md:pb-0">{children}</main>
+      <BottomNav />
     </div>
   );
 }
