@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Calendar, DollarSign, Package, TrendingUp, Check, X, Plus, MapPin, Phone, Mail, ShieldCheck, Star, Wheat, User } from "lucide-react";
+import { Calendar, DollarSign, Package, TrendingUp, Check, X, Plus, MapPin, Phone, Mail, ShieldCheck, Star, Wheat, User, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 
