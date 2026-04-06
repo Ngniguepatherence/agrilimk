@@ -18,6 +18,7 @@ import OwnerDashboard from "./pages/OwnerDashboard";
 import AdminPanel from "./pages/AdminPanel";
 import ProductsMarketplace from "./pages/ProductsMarketplace";
 import NotFound from "./pages/NotFound";
+import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient();
 
