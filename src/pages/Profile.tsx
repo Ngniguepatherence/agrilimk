@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   User, Mail, Phone, MapPin, ShieldCheck, Edit, Camera, CreditCard,
-  Crown, Zap, Check, ArrowRight, AlertCircle, Star, Calendar, Settings
+  Crown, Zap, Check, ArrowRight, AlertCircle, Star, Calendar, Settings, ShoppingBasket
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
