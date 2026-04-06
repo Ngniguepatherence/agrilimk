@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   User, Mail, Phone, MapPin, ShieldCheck, Edit, Camera, CreditCard,
-  Crown, Zap, Check, ArrowRight, AlertCircle, Star, Calendar, Settings
+  Crown, Zap, Check, ArrowRight, AlertCircle, Star, Calendar, Settings, ShoppingBasket
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
@@ -287,61 +287,93 @@ const Profile = () => {
 
         {/* Revenue & Commission Tab */}
         <TabsContent value="revenue" className="space-y-5">
+          {/* Commission collection summary */}
+          <Card className="rounded-2xl border-border/50 shadow-card">
+            <CardHeader><CardTitle className="text-lg">{language === "fr" ? "Collecte des Commissions" : "Commission Collection"}</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { labelEn: "Total Earnings", labelFr: "Revenus Totaux", value: "125,000", icon: CreditCard, color: "text-primary" },
+                  { labelEn: "Platform Fee", labelFr: "Frais Plateforme", value: "6,250", icon: Star, color: "text-destructive" },
+                  { labelEn: "Net Payout", labelFr: "Paiement Net", value: "118,750", icon: Zap, color: "text-primary" },
+                  { labelEn: "Pending", labelFr: "En Attente", value: "15,000", icon: Calendar, color: "text-warning" },
+                ].map((stat, i) => (
+                  <div key={i} className="p-3 rounded-xl bg-muted/30 border border-border/30">
+                    <stat.icon className={`h-5 w-5 ${stat.color} mb-1.5`} />
+                    <p className="text-lg font-bold">{stat.value} <span className="text-xs font-normal text-muted-foreground">FCFA</span></p>
+                    <p className="text-[11px] text-muted-foreground">{language === "fr" ? stat.labelFr : stat.labelEn}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="p-3 rounded-xl bg-primary/5 border border-primary/10 flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium">{language === "fr" ? "Retrait disponible" : "Available for withdrawal"}</p>
+                  <p className="text-xs text-muted-foreground">{language === "fr" ? "Via Mobile Money ou virement" : "Via Mobile Money or bank transfer"}</p>
+                </div>
+                <Button size="sm" className="rounded-xl" onClick={() => toast.success(language === "fr" ? "Demande de retrait envoyée ! (démo)" : "Withdrawal request sent! (demo)")}>
+                  {language === "fr" ? "Retirer" : "Withdraw"}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Recent transactions */}
+          <Card className="rounded-2xl border-border/50 shadow-card">
+            <CardHeader><CardTitle className="text-lg">{language === "fr" ? "Transactions Récentes" : "Recent Transactions"}</CardTitle></CardHeader>
+            <CardContent className="space-y-2">
+              {[
+                { type: "rental", nameEn: "Tractor rental – Amadou D.", nameFr: "Location tracteur – Amadou D.", amount: 25000, commission: 1250, date: "2026-04-02", status: "completed" },
+                { type: "product", nameEn: "Tomatoes sale – 50kg", nameFr: "Vente tomates – 50kg", amount: 15000, commission: 450, date: "2026-04-01", status: "completed" },
+                { type: "rental", nameEn: "Seeder rental – Fatou S.", nameFr: "Location semoir – Fatou S.", amount: 18000, commission: 900, date: "2026-03-30", status: "completed" },
+                { type: "product", nameEn: "Rice sale – 100kg", nameFr: "Vente riz – 100kg", amount: 35000, commission: 1050, date: "2026-03-28", status: "pending" },
+              ].map((tx, i) => (
+                <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-muted/20 border border-border/20">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 ${tx.type === "rental" ? "bg-primary/10 text-primary" : "bg-secondary/10 text-secondary"}`}>
+                      {tx.type === "rental" ? <Settings className="h-4 w-4" /> : <ShoppingBasket className="h-4 w-4" />}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium truncate">{language === "fr" ? tx.nameFr : tx.nameEn}</p>
+                      <p className="text-[11px] text-muted-foreground">{tx.date}</p>
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0 ml-2">
+                    <p className="text-sm font-bold">{tx.amount.toLocaleString()} F</p>
+                    <p className="text-[10px] text-destructive">-{tx.commission.toLocaleString()} F {language === "fr" ? "comm." : "fee"}</p>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Commission model */}
           <Card className="rounded-2xl border-border/50 shadow-card">
             <CardHeader><CardTitle className="text-lg">{commissionLabel}</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               <p className="text-sm text-muted-foreground">
                 {language === "fr"
-                  ? "AgriLink applique un modèle de commission transparent sur chaque transaction effectuée sur la plateforme."
-                  : "AgriLink applies a transparent commission model on every transaction made on the platform."}
+                  ? "AgriLink prélève automatiquement les commissions sur chaque transaction avant le versement."
+                  : "AgriLink automatically deducts commissions from each transaction before payout."}
               </p>
-
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {[
-                  { labelEn: "Equipment Rental Commission", labelFr: "Commission Location Équipement", rate: "3-5%", descEn: "Applied on each completed equipment rental based on your plan", descFr: "Appliquée sur chaque location d'équipement terminée selon votre plan" },
-                  { labelEn: "Product Sales Commission", labelFr: "Commission Vente de Produits", rate: "2-4%", descEn: "Applied on each product sold through the marketplace", descFr: "Appliquée sur chaque produit vendu via le marché" },
-                  { labelEn: "Payment Processing Fee", labelFr: "Frais de Traitement de Paiement", rate: "1.5%", descEn: "Standard fee for Mobile Money and card transactions", descFr: "Frais standard pour les transactions Mobile Money et carte" },
-                  { labelEn: "Insurance Fee (Pro only)", labelFr: "Frais d'Assurance (Pro uniquement)", rate: "500 FCFA/booking", descEn: "Optional equipment damage insurance per booking", descFr: "Assurance optionnelle contre les dommages par réservation" },
+                  { labelEn: "Equipment Rental", labelFr: "Location Équipement", rate: "3-5%" },
+                  { labelEn: "Product Sales", labelFr: "Vente Produits", rate: "2-4%" },
+                  { labelEn: "Processing Fee", labelFr: "Frais Traitement", rate: "1.5%" },
                 ].map((item, i) => (
-                  <div key={i} className="p-4 rounded-xl bg-muted/30 border border-border/30">
-                    <div className="flex items-center justify-between mb-1">
-                      <p className="font-medium text-sm">{language === "fr" ? item.labelFr : item.labelEn}</p>
-                      <Badge variant="outline" className="rounded-full text-xs font-bold">{item.rate}</Badge>
-                    </div>
-                    <p className="text-xs text-muted-foreground">{language === "fr" ? item.descFr : item.descEn}</p>
+                  <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-muted/30 border border-border/30">
+                    <p className="text-sm font-medium">{language === "fr" ? item.labelFr : item.labelEn}</p>
+                    <Badge variant="outline" className="rounded-full text-xs font-bold">{item.rate}</Badge>
                   </div>
                 ))}
               </div>
-
-              <div className="p-4 rounded-xl bg-primary/5 border border-primary/10">
-                <p className="font-medium text-sm mb-2">
-                  {language === "fr" ? "💡 Réduisez vos commissions" : "💡 Reduce your commissions"}
-                </p>
+              <div className="p-3 rounded-xl bg-primary/5 border border-primary/10">
                 <p className="text-xs text-muted-foreground">
-                  {language === "fr"
-                    ? "Passez au plan Pro pour bénéficier de 0% de commission sur toutes les transactions."
-                    : "Upgrade to the Pro plan to enjoy 0% commission on all transactions."}
+                  💡 {language === "fr"
+                    ? "Passez au plan Pro pour 0% de commission."
+                    : "Upgrade to Pro for 0% commission."}
                 </p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="rounded-2xl border-border/50 shadow-card">
-            <CardHeader><CardTitle className="text-lg">{language === "fr" ? "Résumé des Revenus" : "Revenue Summary"}</CardTitle></CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                  { labelEn: "Total Earnings", labelFr: "Revenus Totaux", value: "125,000 FCFA", icon: CreditCard },
-                  { labelEn: "Commissions Paid", labelFr: "Commissions Payées", value: "6,250 FCFA", icon: Star },
-                  { labelEn: "Net Revenue", labelFr: "Revenu Net", value: "118,750 FCFA", icon: Zap },
-                  { labelEn: "Pending Payouts", labelFr: "Paiements en Attente", value: "15,000 FCFA", icon: Calendar },
-                ].map((stat, i) => (
-                  <div key={i} className="p-4 rounded-xl bg-muted/30 border border-border/30 text-center">
-                    <stat.icon className="h-5 w-5 text-primary mx-auto mb-2" />
-                    <p className="text-lg font-bold">{stat.value}</p>
-                    <p className="text-xs text-muted-foreground">{language === "fr" ? stat.labelFr : stat.labelEn}</p>
-                  </div>
-                ))}
               </div>
             </CardContent>
           </Card>

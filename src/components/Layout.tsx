@@ -155,7 +155,6 @@ export function BottomNav() {
     ? [
         { path: "/", label: t.nav.home, icon: Home },
         { path: "/marketplace", label: t.nav.marketplace, icon: ShoppingCart },
-        { path: "/products", label: (t as any).nav?.products || "Products", icon: ShoppingBasket },
         { path: "/map", label: t.nav.map, icon: MapPin },
         {
           path: `/${user.role === "admin" ? "admin" : user.role === "collectivity" ? "owner" : user.role}`,
@@ -166,7 +165,6 @@ export function BottomNav() {
     : [
         { path: "/", label: t.nav.home, icon: Home },
         { path: "/marketplace", label: t.nav.marketplace, icon: ShoppingCart },
-        { path: "/products", label: (t as any).nav?.products || "Products", icon: ShoppingBasket },
         { path: "/map", label: t.nav.map, icon: MapPin },
         { path: "/login", label: t.nav.login, icon: User },
       ];
