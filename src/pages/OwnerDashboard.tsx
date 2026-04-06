@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Calendar, DollarSign, Package, TrendingUp, Check, X, Plus, MapPin, Phone, Mail, ShieldCheck, Star, Wheat, User } from "lucide-react";
+import { Calendar, DollarSign, Package, TrendingUp, Check, X, Plus, MapPin, Phone, Mail, ShieldCheck, Star, Wheat, User, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 
@@ -156,21 +156,36 @@ const OwnerDashboard = () => {
             ))
           )}
           {ownerBookings.filter((b) => b.status !== "pending").map((b) => (
-            <Card key={b.id} className="rounded-2xl border-border/30 opacity-70">
-              <CardContent className="p-4 flex items-center justify-between">
-                <div className="flex items-center gap-3">
+            <Card key={b.id} className="rounded-2xl border-border/30 opacity-80">
+              <CardContent className="p-4 flex items-center justify-between gap-2">
+                <div className="flex items-center gap-3 min-w-0">
                   {b.farmerProfile && (
-                    <Avatar className="h-8 w-8">
+                    <Avatar className="h-8 w-8 shrink-0">
                       <AvatarImage src={b.farmerProfile.avatar} />
                       <AvatarFallback className="text-xs">{b.farmerName.charAt(0)}</AvatarFallback>
                     </Avatar>
                   )}
-                  <div>
-                    <p className="font-medium text-sm">{b.equipmentName} — {b.farmerName}</p>
+                  <div className="min-w-0">
+                    <p className="font-medium text-sm truncate">{b.equipmentName} — {b.farmerName}</p>
                     <p className="text-xs text-muted-foreground">{b.date} • {b.totalPrice.toLocaleString()} FCFA</p>
                   </div>
                 </div>
-                <Badge variant="outline" className={`rounded-full ${statusColors[b.status]}`}>{t.booking[b.status as keyof typeof t.booking]}</Badge>
+                <div className="flex items-center gap-2 shrink-0">
+                  {b.status === "accepted" && b.farmerProfile && (
+                    <a
+                      href={`https://wa.me/${b.farmerProfile.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
+                        `Bonjour ${b.farmerProfile.name}, votre réservation pour ${b.equipmentName} le ${b.date} a été acceptée. Discutons des détails !`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Button size="sm" className="rounded-xl gap-1 bg-[#25D366] hover:bg-[#20bd5a] text-white h-8 px-3">
+                        <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
+                      </Button>
+                    </a>
+                  )}
+                  <Badge variant="outline" className={`rounded-full ${statusColors[b.status]}`}>{t.booking[b.status as keyof typeof t.booking]}</Badge>
+                </div>
               </CardContent>
             </Card>
           ))}
